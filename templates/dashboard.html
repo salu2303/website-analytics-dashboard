@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics Dashboard</title>
+<!-- Tailwind already loaded -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans text-gray-800">
+  <div class="max-w-5xl mx-auto px-4 py-10">
+    <h2 class="text-3xl font-bold text-center mb-10 text-blue-800">📊 Analytics Dashboard</h2>
+
+    <!-- Date Range Form -->
+    <form method="post" class="bg-white shadow p-6 rounded-lg mb-10 flex flex-col sm:flex-row items-center gap-4 justify-center">
+      <label class="flex flex-col text-sm font-medium">
+        Start Date
+        <input type="date" name="start_date" required class="mt-1 px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500" />
+      </label>
+      <label class="flex flex-col text-sm font-medium">
+        End Date
+        <input type="date"  name="end_date" required class="mt-1 px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500" />
+      </label>
+      <button type="submit" class="mt-4 sm:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition">
+        Fetch Report
+      </button>
+    </form>
+
+    {% if results %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-4 text-blue-700">📅 Date Range</h3>
+            <p class="text-lg font-medium text-gray-900">{{ start_date }} to {{ end_date }}</p>
+        </div>
+      <!-- Total Visitors -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-xl font-semibold mb-4 text-blue-700">👥 Total Visitors</h3>
+        <p class="text-3xl font-bold text-gray-900">{{ results.total_visitors }}</p>
+      </div>
+
+      <!-- Top Product Page Views -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h4 class="text-xl font-semibold mb-4 text-blue-700">🔥 Top Product Page Views</h4>
+        <ul class="space-y-2">
+          {% for product in results.top_product_pages %}
+            <li class="border-b pb-2">{{ product.name }} — <span class="font-medium">{{ product.views }}</span> views</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Visitors by Device -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h4 class="text-xl font-semibold mb-4 text-blue-700">💻 Visitors by Device</h4>
+        <ul class="space-y-2">
+          {% for device, count in results.device_stats.items() %}
+            <li class="border-b pb-2">{{ device }} — <span class="font-medium">{{ count }}</span> users</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Page Views -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h4 class="text-xl font-semibold mb-4 text-blue-700">📄 Page Views</h4>
+        <ul class="space-y-2">
+          {% for page, count in results.page_views.items() %}
+            <li class="border-b pb-2">{{ page }} — <span class="font-medium">{{ count }}</span> views</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Last Search Terms -->
+      <div class="bg-white p-6 rounded-lg shadow md:col-span-2">
+        <h4 class="text-xl font-semibold mb-4 text-blue-700">🔍 Last 10 Search Terms</h4>
+        <ul class="flex flex-wrap gap-3">
+          {% for term in results.last_search_terms %}
+            {% if term != '{{search_term}}' %}
+              <li class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">{{ term }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
